@@ -1,0 +1,187 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NITI TARA</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <video autoplay muted playsinline loop id="myVideo">
+      <source src="images/bg-video.mp4" type="video/mp4" />
+    </video>
+    <div class="content">
+      <div
+        class="d-flex flex-row justify-content-between align-items-center px-4 mt-5"
+      >
+        <div class="user_guide">
+          <a href="user-guide.html" class="image-swap">
+            <img
+              src="images/User_Guide (1).png"
+              style="height: 75px; width: 75px"
+            />
+          </a>
+        </div>
+        <div class="logo">
+          <img src="images/logo.svg" alt="Logo" />
+        </div>
+        <div class="feedback">
+          <a href="https://forms.gle/5DfKG6mtJrbP9idy8" class="image-swap">
+            <img src="images/Feedback (1).png" alt="Logo" style="height: 75px; width: 75px"/>
+          </a>
+        </div>
+      </div>
+      <div class="logo_box">
+        <ul>
+          <li>
+            <a href="resources.html" class="image-swap">
+              <img src="images/1_img.svg" class="img-normal" alt="" />
+              <img src="images/1_imgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://nitiforstates.gov.in/"
+              target="_blank"
+              class="image-swap"
+            >
+              <img src="images/2_Img.svg" class="img-normal" alt="" />
+              <img src="images/2_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://niti.pmgatishakti.gov.in/NitiIndia/login"
+              target="_blank"
+              class="image-swap"
+            >
+              <img src="images/3_Img.svg" class="img-normal" alt="" />
+              <img src="images/3_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://vbsr.nitiforstates.gov.in/"
+              target="_blank"
+              class="image-swap"
+            >
+              <img src="images/4_Img.svg" class="img-normal" alt="" />
+              <img src="images/4_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="logo_box">
+        <ul>
+          <li>
+            <a
+              href="https://abp.championsofchange.gov.in/data#?tab=blockprofile&state=all&district=all"
+              target="_blank"
+              class="image-swap"
+            >
+              <img src="images/5_Img.svg" class="img-normal" alt="" />
+              <img src="images/5_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+          <li>
+            <a href="#" id="openBhasiniSmritiLogo" class="image-swap">
+              <img src="images/6_Img.svg" class="img-normal" alt="" />
+              <img src="images/6_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://championsofchange.gov.in/"
+              target="_blank"
+              class="image-swap"
+            >
+              <img src="images/7_Img.svg" class="img-normal" alt="" />
+              <img src="images/7_ImgH.svg" class="img-hover" alt="" />
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="d-flex flex-row justify-content-between align-items-center px-4"
+      >
+        <div class="poweroff">
+          <a href="#"><img src="images/power_off.png" alt="" /></a>
+        </div>
+        <div class="desktop">
+          <a href="#" id="showDesktopBtn">Desktop</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shutdown confirmation modal (Bootstrap 4) -->
+    <div
+      class="modal fade"
+      id="shutdownModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="shutdownModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div
+            class="modal-body d-flex flex-column align-items-center justify-content-center text-center"
+            style="padding: 30px"
+          >
+            <img
+              src="images/power-black.png"
+              alt=""
+              style="width: 72px; margin-bottom: 25px"
+            />
+            <h4 id="shutdownModalLabel" style="margin-bottom: 12px">
+              Shutdown NITI TARA?
+            </h4>
+            <p style="color: #666; margin-bottom: 28px">
+              Are you sure you want to shut down the <br>NITI TARA now?
+            </p>
+            <div>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                style="min-width: 110px; margin-right: 10px"
+              >
+                No
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger"
+                id="confirmShutdownBtn"
+                style="min-width: 110px"
+              >
+                Yes, shutdown
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bhasini Smriti launch loader -->
+    <div id="bhasiniLoader" class="kiosk-loader-overlay" aria-hidden="true">
+      <div class="kiosk-loader-spinner"></div>
+      <div class="kiosk-loader-text">Launching Bhasini Smriti…</div>
+    </div>
+
+    <!-- Bootstrap core JS-->
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>

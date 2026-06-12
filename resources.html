@@ -1,0 +1,262 @@
+<!-- resources.html — in-app submenu for the NFS_Resources tile.
+     Content is generated from the NFS_Resources folder by
+     scripts/build-resources.js into resources-data.js. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NFS Resources — NITI TARA</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+      html,
+      body {
+        height: 100vh;
+        background: radial-gradient(
+          circle at 50% 0%,
+          #14306b 0%,
+          #0a1a3c 55%,
+          #050b1d 100%
+        );
+        background-repeat: repeat-y;
+        color: #f1f1f1;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      header .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      header .brand img {
+        height: 56px;
+      }
+      header h1 {
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+      }
+      .btn {
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 15px;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease;
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      h2.section {
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #9fc0ff;
+        margin: 26px 0 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        cursor: pointer;
+        text-align: left;
+        padding: 18px 20px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 16px;
+        line-height: 1.35;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease,
+          border-color 0.15s ease;
+      }
+      .card:hover {
+        background: rgba(80, 140, 255, 0.25);
+        border-color: rgba(120, 170, 255, 0.6);
+        transform: translateY(-2px);
+      }
+      .card .tag {
+        display: block;
+        font-size: 12px;
+        color: #9fc0ff;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .crumbs {
+        color: #9fc0ff;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+      .empty {
+        opacity: 0.6;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <img src="images/logo.png" alt="NITI TARA" />
+          <h1>NFS Resources</h1>
+        </div>
+        <div>
+          <button class="btn" id="backBtn" style="display: none">
+            &larr; Back
+          </button>
+          <button class="btn" id="homeBtn">&#8962; Home</button>
+        </div>
+      </header>
+      <main id="view"></main>
+    </div>
+
+    <script src="resources-data.js"></script>
+    <script>
+      var R = window.RESOURCES || { links: [], sectors: [] };
+      var view = document.getElementById("view");
+      var backBtn = document.getElementById("backBtn");
+
+      function openURL(url) {
+        if (window.kiosk) window.kiosk.openURL(url);
+      }
+      function openDoc(rel) {
+        if (window.kiosk) window.kiosk.openDoc(rel);
+      }
+
+      function el(tag, cls, html) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html != null) e.innerHTML = html;
+        return e;
+      }
+
+      function card(tag, title, onClick) {
+        var c = el("div", "card");
+        c.innerHTML =
+          '<span class="tag">' +
+          tag +
+          "</span>" +
+          title.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+        c.addEventListener("click", onClick);
+        return c;
+      }
+
+      function showHome() {
+        backBtn.style.display = "none";
+        view.innerHTML = "";
+
+        if (R.links.length) {
+          view.appendChild(el("h2", "section", "Browse NFS"));
+          var g1 = el("div", "grid");
+          R.links.forEach(function (l) {
+            g1.appendChild(
+              card("Web", l.title, function () {
+                openURL(l.url);
+              }),
+            );
+          });
+          view.appendChild(g1);
+        }
+
+        if (R.sectors.length) {
+          view.appendChild(el("h2", "section", "Explore Sectors"));
+          var g2 = el("div", "grid");
+          R.sectors.forEach(function (s) {
+            var docCount = s.docs.length;
+            g2.appendChild(
+              card(
+                docCount + " document" + (docCount === 1 ? "" : "s"),
+                s.name,
+                function () {
+                  showSector(s);
+                },
+              ),
+            );
+          });
+          view.appendChild(g2);
+        }
+      }
+
+      function showSector(s) {
+        backBtn.style.display = "inline-block";
+        backBtn.onclick = showHome;
+        view.innerHTML = "";
+        view.appendChild(
+          el("div", "crumbs", "Explore Sectors &rsaquo; " + s.name),
+        );
+
+        if (s.url) {
+          view.appendChild(el("h2", "section", "On NFS"));
+          var gl = el("div", "grid");
+          gl.appendChild(
+            card("Web", "Open " + s.name + " on NFS", function () {
+              openURL(s.url);
+            }),
+          );
+          view.appendChild(gl);
+        }
+
+        view.appendChild(el("h2", "section", "Documents"));
+        if (!s.docs.length) {
+          view.appendChild(el("p", "empty", "No documents in this sector."));
+          return;
+        }
+        var gd = el("div", "grid");
+        s.docs.forEach(function (d) {
+          gd.appendChild(
+            card("PDF", d.title, function () {
+              openDoc(d.rel);
+            }),
+          );
+        });
+        view.appendChild(gd);
+      }
+
+      document.getElementById("homeBtn").addEventListener("click", function () {
+        window.location.href = "index.html";
+      });
+
+      showHome();
+    </script>
+  </body>
+</html>
