@@ -9,33 +9,57 @@
     <title>User Guide — NITI TARA</title>
     <link rel="stylesheet" href="css/style.css" />
     <style>
-      ::-webkit-scrollbar { width: 10px; }
-      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
       ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 10px;
       }
-      ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
 
-      html, body {
+      html,
+      body {
         height: 100vh;
         background: radial-gradient(
           circle at 50% 0%,
-          #14306b 0%, #0a1a3c 55%, #050b1d 100%
+          #14306b 0%,
+          #0a1a3c 55%,
+          #050b1d 100%
         );
         background-repeat: repeat-y;
         color: #f1f1f1;
         font-family: "Roboto", "Segoe UI", Arial, sans-serif;
       }
-      .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 24px 60px;
+      }
       header {
-        display: flex; align-items: center; justify-content: space-between;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         margin-bottom: 28px;
       }
-      header .brand { display: flex; align-items: center; gap: 16px; }
-      header .brand img { height: 56px; }
+      header .brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      header .brand img {
+        height: 56px;
+      }
       header h1 {
-        font-size: 22px; font-weight: 600; margin: 0; letter-spacing: 0.5px;
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
       }
       .btn {
         cursor: pointer;
@@ -46,13 +70,23 @@
         border-radius: 8px;
         font-size: 15px;
         margin-left: 8px;
-        transition: background 0.15s ease, transform 0.1s ease;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease;
       }
-      .btn:hover { background: rgba(255, 255, 255, 0.18); }
-      .btn:active { transform: scale(0.97); }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
       h2.section {
-        font-size: 16px; font-weight: 600; text-transform: uppercase;
-        letter-spacing: 1.5px; color: #9fc0ff; margin: 26px 0 14px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #9fc0ff;
+        margin: 26px 0 14px;
       }
       .grid {
         display: grid;
@@ -69,7 +103,10 @@
         color: #fff;
         font-size: 16px;
         line-height: 1.35;
-        transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease,
+          border-color 0.15s ease;
       }
       .card:hover {
         background: rgba(80, 140, 255, 0.25);
@@ -77,11 +114,22 @@
         transform: translateY(-2px);
       }
       .card .tag {
-        display: block; font-size: 12px; color: #9fc0ff;
-        margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px;
+        display: block;
+        font-size: 12px;
+        color: #9fc0ff;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
-      .crumbs { color: #9fc0ff; font-size: 14px; margin-bottom: 6px; }
-      .empty { opacity: 0.6; font-style: italic; }
+      .crumbs {
+        color: #9fc0ff;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+      .empty {
+        opacity: 0.6;
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
@@ -92,7 +140,9 @@
           <h1>User Guide</h1>
         </div>
         <div>
-          <button class="btn" id="backBtn" style="display: none">&larr; Back</button>
+          <button class="btn" id="backBtn" style="display: none">
+            &larr; Back
+          </button>
           <button class="btn" id="homeBtn">&#8962; Home</button>
         </div>
       </header>
@@ -101,7 +151,11 @@
 
     <script src="user-guide-data.js"></script>
     <script>
-      var U = window.USER_GUIDE || { trainingGuide: null, videos: { english: [], hindi: [] } };
+      var U = window.USER_GUIDE || {
+        trainingGuide: null,
+        sop: null,
+        videos: { english: [], hindi: [] },
+      };
       var view = document.getElementById("view");
       var backBtn = document.getElementById("backBtn");
 
@@ -126,7 +180,10 @@
       function card(tag, title, onClick) {
         var c = el("div", "card");
         c.innerHTML =
-          '<span class="tag">' + escapeHtml(tag) + "</span>" + escapeHtml(title);
+          '<span class="tag">' +
+          escapeHtml(tag) +
+          "</span>" +
+          escapeHtml(title);
         c.addEventListener("click", onClick);
         return c;
       }
@@ -158,6 +215,13 @@
             }),
           );
         }
+        if (U.sop) {
+          g.appendChild(
+            card("PDF", U.sop.title, function () {
+              openDoc(U.sop.rel);
+            }),
+          );
+        }
         g.appendChild(
           card("Folder", "Self Learning Videos", function () {
             go(renderLanguages);
@@ -176,14 +240,26 @@
         var hi = U.videos.hindi.length;
 
         g.appendChild(
-          card(en + " video" + (en === 1 ? "" : "s"), "English Version", function () {
-            go(function () { renderVideos("English Version", U.videos.english); });
-          }),
+          card(
+            en + " video" + (en === 1 ? "" : "s"),
+            "English Version",
+            function () {
+              go(function () {
+                renderVideos("English Version", U.videos.english);
+              });
+            },
+          ),
         );
         g.appendChild(
-          card(hi + " video" + (hi === 1 ? "" : "s"), "Hindi Version", function () {
-            go(function () { renderVideos("Hindi Version", U.videos.hindi); });
-          }),
+          card(
+            hi + " video" + (hi === 1 ? "" : "s"),
+            "Hindi Version",
+            function () {
+              go(function () {
+                renderVideos("Hindi Version", U.videos.hindi);
+              });
+            },
+          ),
         );
         view.appendChild(g);
       }
@@ -191,7 +267,11 @@
       // ----- Level 3: video list for a language -----
       function renderVideos(label, list) {
         view.appendChild(
-          el("div", "crumbs", "Self Learning Videos &rsaquo; " + escapeHtml(label)),
+          el(
+            "div",
+            "crumbs",
+            "Self Learning Videos &rsaquo; " + escapeHtml(label),
+          ),
         );
         view.appendChild(el("h2", "section", "Videos"));
         if (!list.length) {

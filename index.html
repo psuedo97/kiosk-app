@@ -178,6 +178,13 @@
       <div class="kiosk-loader-text">Launching Bhasini Smriti…</div>
     </div>
 
+    <!-- Auto-update notice. Hidden until main signals an update is downloaded
+         and ready. Informational only: a maintainer applies it with the
+         maintenance combo Ctrl+Alt+Shift+U. -->
+    <div id="updateToast" class="kiosk-update-toast" aria-hidden="true">
+      <span id="updateToastText"></span>
+    </div>
+
     <!-- Bootstrap core JS-->
     <script src="js/jquery-3.7.1.min.js"></script>
     <script src="js/popper.min.js"></script>

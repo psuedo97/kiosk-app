@@ -11,6 +11,9 @@
   },
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "electron-updater": "^6.8.9"
+  },
   "devDependencies": {
     "clean-css": "^5.3.3",
     "electron": "^33.2.0",
@@ -35,6 +38,13 @@
         "nsis"
       ]
     },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://REPLACE-WITH-YOUR-BUCKET/niti-tara/updates/",
+        "channel": "latest"
+      }
+    ],
     "nsis": {
       "oneClick": false,
       "perMachine": true,

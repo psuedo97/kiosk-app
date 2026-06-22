@@ -4,8 +4,10 @@
 //   1. Show the home screen full-screen and locked down (kiosk mode).
 //   2. Auto-start on Windows login.
 //   3. When a tile is clicked, open the link/PDF in a *controlled* browser
-//      window (Edge or Chrome) and watch that browser's process.
-//   4. When the user closes that browser, bring the home screen back to front.
+//      window (Edge or Chrome). Multiple windows can be open at the same
+//      time — every clicked tile launches its own window.
+//   4. When ALL controlled browser windows (and SMRITI, if running) have
+//      closed, bring the home screen back to front.
 //
 // Dev/maintenance: run with `--dev` (or set KIOSK_DEV=1) for a normal resizable,
 // closable window with no lockdown. In locked mode, the maintenance exit combo
@@ -23,6 +25,7 @@ const path = require("path");
 const fs = require("fs");
 const { spawn, exec } = require("child_process");
 const { pathToFileURL } = require("url");
+const { initAutoUpdate } = require("./updater");
 
 const DEV = process.argv.includes("--dev") || process.env.KIOSK_DEV === "1";
 const APP_ROOT = __dirname;
@@ -42,7 +45,14 @@ const INTELLISPACE_POLL_INTERVAL_MS = 2500;
 let intellispaceRunning = false;
 
 let mainWindow = null;
-let browserProc = null;
+// Every controlled foreground process (browser-window launcher + SMRITI) goes
+// into this set. The kiosk's alwaysOnTop stays dropped while it's non-empty
+// and is restored only when ALL controlled windows have closed. Tracking
+// every launcher lets the user open many tiles at once.
+const controlledProcs = new Set();
+// SMRITI is single-instance — guard against duplicate launches. Browser
+// windows aren't guarded; Chromium's singleton handles the routing.
+let smritiProc = null;
 app.isQuitting = false;
 
 // single instance
@@ -71,10 +81,14 @@ function findBrowser() {
 }
 
 // Open `target` (an http(s) URL or a file:// URL) in the controlled browser.
-// The browser runs against a dedicated profile so it is always its own process
-// that we can watch — when it exits we know the user closed the window.
+// Multiple windows can be open at the same time: every tile click spawns a
+// new `msedge.exe --app=URL` launcher. The Chromium process singleton routes
+// each launch to the existing main browser process, which opens a new app
+// window for the URL — so subsequent launcher processes typically exit
+// quickly after the handoff while the main browser process stays alive for
+// as long as any window is open. We track every launcher in `controlledProcs`
+// and only restore the kiosk's lockdown when that set becomes empty.
 function openInBrowser(target) {
-  if (browserProc) return; // one controlled browser at a time
   const browser = findBrowser();
   if (!browser) {
     // No Edge/Chrome found — fall back to the default browser. We cannot watch
@@ -102,18 +116,21 @@ function openInBrowser(target) {
     `--app=${target}`, // clean window: no tabs / address bar, just an X to close
   ];
 
-  // Let the freshly launched browser come to the foreground.
-  if (!DEV && mainWindow) mainWindow.setAlwaysOnTop(false);
+  // Drop the kiosk's alwaysOnTop on the FIRST controlled launch so Edge can
+  // sit above it. Subsequent launches don't need to (already dropped).
+  if (controlledProcs.size === 0 && !DEV && mainWindow) {
+    mainWindow.setAlwaysOnTop(false);
+  }
 
-  browserProc = spawn(browser, args, { windowsHide: false });
-  browserProc.once("error", () => {
-    browserProc = null;
-    restoreKiosk();
-  });
-  browserProc.once("exit", () => {
-    browserProc = null;
-    restoreKiosk();
-  });
+  const proc = spawn(browser, args, { windowsHide: false });
+  controlledProcs.add(proc);
+  const onEnd = () => {
+    controlledProcs.delete(proc);
+    // Only restore the kiosk when EVERY controlled window has closed.
+    if (controlledProcs.size === 0) restoreKiosk();
+  };
+  proc.once("error", onEnd);
+  proc.once("exit", onEnd);
 }
 
 // kiosk window
@@ -214,7 +231,7 @@ function createWindow() {
 // IntelliSpace is running so its whiteboard floats above the kiosk.
 function setKioskTopmost() {
   if (!mainWindow || mainWindow.isDestroyed() || DEV) return;
-  if (browserProc) return; // controlled-process flow owns alwaysOnTop right now
+  if (controlledProcs.size > 0) return; // a controlled foreground window owns alwaysOnTop right now
   if (intellispaceRunning) {
     mainWindow.setAlwaysOnTop(false);
   } else {
@@ -298,11 +315,15 @@ function registerLockdown() {
 
 function doQuit() {
   app.isQuitting = true;
-  try {
-    if (browserProc) browserProc.kill();
-  } catch (_) {
-    /* ignore */
+  for (const p of controlledProcs) {
+    try {
+      p.kill();
+    } catch (_) {
+      /* ignore */
+    }
   }
+  controlledProcs.clear();
+  smritiProc = null;
   globalShortcut.unregisterAll();
   app.quit();
 }
@@ -389,7 +410,7 @@ ipcMain.handle("show-desktop", () => {
 // kiosk's always-on-top so the exe is visible, watch the process, and
 // re-assert kiosk mode when the user closes the exe.
 ipcMain.handle("open-bhasini-exe", () => {
-  if (browserProc) return; // already running a controlled foreground process
+  if (smritiProc) return; // SMRITI is single-instance — ignore duplicate clicks
   const exe = path.join(APP_ROOT, "external", "SMRITI_V3.exe");
   if (!fs.existsSync(exe)) {
     console.error("SMRITI_V3.exe not found at", exe);
@@ -424,27 +445,33 @@ ipcMain.handle("open-bhasini-exe", () => {
   };
   // ------------------------------------------------------------------------
 
-  if (!DEV && mainWindow) mainWindow.setAlwaysOnTop(false);
+  // Drop kiosk pin on the first controlled launch (same rule as the browser
+  // path — if browser windows are already open, the pin is already dropped).
+  if (controlledProcs.size === 0 && !DEV && mainWindow) {
+    mainWindow.setAlwaysOnTop(false);
+  }
   try {
-    browserProc = spawn(exe, [], {
+    smritiProc = spawn(exe, [], {
       cwd: path.dirname(exe),
       windowsHide: false,
     });
-    browserProc.once("error", (err) => {
+    controlledProcs.add(smritiProc);
+    const onEnd = () => {
+      cleanupLoader();
+      controlledProcs.delete(smritiProc);
+      smritiProc = null;
+      if (controlledProcs.size === 0) restoreKiosk();
+    };
+    smritiProc.once("error", (err) => {
       console.error("SMRITI_V3 spawn error:", err);
-      cleanupLoader();
-      browserProc = null;
-      restoreKiosk();
+      onEnd();
     });
-    browserProc.once("exit", () => {
-      cleanupLoader();
-      browserProc = null;
-      restoreKiosk();
-    });
+    smritiProc.once("exit", onEnd);
   } catch (err) {
     console.error("Failed to launch SMRITI_V3.exe:", err);
     cleanupLoader();
-    restoreKiosk();
+    smritiProc = null;
+    if (controlledProcs.size === 0) restoreKiosk();
   }
 });
 
@@ -457,6 +484,10 @@ app.whenReady().then(() => {
     if (app.isPackaged) clearStaleAutoLaunch();
     startIntellispacePoll();
   }
+  // Background auto-update: checks the configured feed, downloads new versions
+  // silently, then notifies the renderer. A maintainer applies the update with
+  // Ctrl+Alt+Shift+U. No-op unless the app is packaged (see updater.js).
+  initAutoUpdate(() => mainWindow);
 });
 
 app.on("window-all-closed", () => app.quit());

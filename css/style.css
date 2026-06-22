@@ -183,6 +183,26 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* Auto-update "ready" notice — a small, discreet toast in the corner so the
+   public face stays clean while a maintainer sees an update is waiting. */
+.kiosk-update-toast {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: none;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 14px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 2100;
+}
+.kiosk-update-toast.show {
+  display: block;
+}
+
 @media (min-width: 2000px) and (max-width: 3000px) {
   .logo_box ul li img {
     width: 250px;

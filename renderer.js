@@ -103,4 +103,26 @@
       });
     }
   }
+
+  // Auto-update notice. Main streams status as updates are checked/downloaded.
+  // We only surface the "ready" state to the screen — a maintainer applies it
+  // with Ctrl+Alt+Shift+U. Other states are kept quiet so the kiosk face stays
+  // clean for the public.
+  if (window.kiosk && window.kiosk.onUpdateStatus) {
+    const toast = document.getElementById("updateToast");
+    const toastText = document.getElementById("updateToastText");
+    if (toast && toastText) {
+      window.kiosk.onUpdateStatus(function (status) {
+        if (status && status.state === "ready") {
+          toastText.textContent =
+            "Update " +
+            (status.version ? "v" + status.version + " " : "") +
+            "ready — press Ctrl+Alt+Shift+U to install";
+          toast.classList.add("show");
+        } else if (status && status.state === "error") {
+          toast.classList.remove("show");
+        }
+      });
+    }
+  }
 })();
