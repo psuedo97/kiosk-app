@@ -1,6 +1,6 @@
 {
   "name": "niti-tara-kiosk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "NITI TARA kiosk home screen for Windows. Auto-starts on login, shows a locked full-screen home screen, opens tiles in a controlled browser, and returns to the home screen when the browser is closed.",
   "main": "main.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://REPLACE-WITH-YOUR-BUCKET/niti-tara/updates/",
+        "url": "https://niti-tara-updates.s3.ap-south-1.amazonaws.com/updates/",
         "channel": "latest"
       }
     ],

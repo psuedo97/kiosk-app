@@ -28,9 +28,17 @@
           <img src="images/logo.svg" alt="Logo" />
         </div>
         <div class="feedback">
-          <a href="https://forms.gle/5DfKG6mtJrbP9idy8" class="image-swap">
-            <img src="images/Feedback (1).png" alt="Logo" style="height: 75px; width: 75px"/>
+          <a href="#" id="openFeedbackMenu" class="image-swap" aria-haspopup="true" aria-expanded="false">
+            <img src="images/Feedback (1).png" alt="Support" style="height: 75px; width: 75px"/>
           </a>
+          <div class="feedback-menu" id="feedbackMenu" role="menu">
+            <a href="https://schoolnetindia.com/niti-tara-feedback" class="feedback-menu-item" role="menuitem">
+              Feedback 1.1
+            </a>
+            <a href="#" id="openContactModal" class="feedback-menu-item" role="menuitem">
+              Contact Support
+            </a>
+          </div>
         </div>
       </div>
       <div class="logo_box">
@@ -165,6 +173,55 @@
                 style="min-width: 110px"
               >
                 Yes, shutdown
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Support modal (Bootstrap 4). Opened from the Feedback icon's
+         dropdown menu. -->
+    <div
+      class="modal fade"
+      id="contactModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="contactModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content contact-modal-content">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="modal-body" style="padding: 32px 34px 28px">
+            <h4 id="contactModalLabel" class="contact-title">Contact Support</h4>
+            <div class="contact-row">
+              <div class="contact-label">Toll-Free</div>
+              <div class="contact-value">1800-180-8800</div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-label">WhatsApp</div>
+              <div class="contact-value">+91 74286-94964</div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-label">Email</div>
+              <div class="contact-value">kyan.support@schoolnetindia.com</div>
+            </div>
+            <div class="contact-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+                style="min-width: 110px"
+              >
+                Close
               </button>
             </div>
           </div>

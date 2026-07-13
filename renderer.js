@@ -80,6 +80,60 @@
     modal.addEventListener("click", function (e) {
       if (e.target === modal) hideShutdownModal();
     });
+
+    // --- Feedback dropdown menu (top-right icon) -----------------------------
+    // The Feedback icon toggles a small two-item menu: "Feedback" opens the
+    // feedback URL (via the standard wire() path since it's an http link) and
+    // "Contact Support" opens the contact modal below.
+    const fbTrigger = document.getElementById("openFeedbackMenu");
+    const fbMenu = document.getElementById("feedbackMenu");
+    if (fbTrigger && fbMenu) {
+      const closeMenu = function () {
+        fbMenu.classList.remove("show");
+        fbTrigger.setAttribute("aria-expanded", "false");
+      };
+      fbTrigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation(); // don't let the outside-click handler close us
+        const willShow = !fbMenu.classList.contains("show");
+        fbMenu.classList.toggle("show", willShow);
+        fbTrigger.setAttribute("aria-expanded", willShow ? "true" : "false");
+      });
+      // Click outside → close.
+      document.addEventListener("click", function (e) {
+        if (!fbMenu.classList.contains("show")) return;
+        if (fbMenu.contains(e.target) || fbTrigger.contains(e.target)) return;
+        closeMenu();
+      });
+      // Any menu-item click → close (whichever action then runs).
+      fbMenu.querySelectorAll(".feedback-menu-item").forEach(function (item) {
+        item.addEventListener("click", closeMenu);
+      });
+    }
+
+    // --- Contact Support modal ----------------------------------------------
+    const contactModal = document.getElementById("contactModal");
+    const contactTrigger = document.getElementById("openContactModal");
+    if (contactTrigger) {
+      contactTrigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (window.jQuery) window.jQuery("#contactModal").modal("show");
+      });
+    }
+    if (contactModal) {
+      const hideContact = function () {
+        if (window.jQuery) window.jQuery("#contactModal").modal("hide");
+      };
+      contactModal.querySelectorAll('[data-dismiss="modal"]').forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          hideContact();
+        });
+      });
+      contactModal.addEventListener("click", function (e) {
+        if (e.target === contactModal) hideContact();
+      });
+    }
   });
 
   const desktopBtn = document.getElementById("showDesktopBtn");
