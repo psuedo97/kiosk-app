@@ -80,6 +80,60 @@
     modal.addEventListener("click", function (e) {
       if (e.target === modal) hideShutdownModal();
     });
+
+    // --- Feedback dropdown menu (top-right icon) -----------------------------
+    // The Feedback icon toggles a small two-item menu: "Feedback" opens the
+    // feedback URL (via the standard wire() path since it's an http link) and
+    // "Contact Support" opens the contact modal below.
+    const fbTrigger = document.getElementById("openFeedbackMenu");
+    const fbMenu = document.getElementById("feedbackMenu");
+    if (fbTrigger && fbMenu) {
+      const closeMenu = function () {
+        fbMenu.classList.remove("show");
+        fbTrigger.setAttribute("aria-expanded", "false");
+      };
+      fbTrigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation(); // don't let the outside-click handler close us
+        const willShow = !fbMenu.classList.contains("show");
+        fbMenu.classList.toggle("show", willShow);
+        fbTrigger.setAttribute("aria-expanded", willShow ? "true" : "false");
+      });
+      // Click outside → close.
+      document.addEventListener("click", function (e) {
+        if (!fbMenu.classList.contains("show")) return;
+        if (fbMenu.contains(e.target) || fbTrigger.contains(e.target)) return;
+        closeMenu();
+      });
+      // Any menu-item click → close (whichever action then runs).
+      fbMenu.querySelectorAll(".feedback-menu-item").forEach(function (item) {
+        item.addEventListener("click", closeMenu);
+      });
+    }
+
+    // --- Contact Support modal ----------------------------------------------
+    const contactModal = document.getElementById("contactModal");
+    const contactTrigger = document.getElementById("openContactModal");
+    if (contactTrigger) {
+      contactTrigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (window.jQuery) window.jQuery("#contactModal").modal("show");
+      });
+    }
+    if (contactModal) {
+      const hideContact = function () {
+        if (window.jQuery) window.jQuery("#contactModal").modal("hide");
+      };
+      contactModal.querySelectorAll('[data-dismiss="modal"]').forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          hideContact();
+        });
+      });
+      contactModal.addEventListener("click", function (e) {
+        if (e.target === contactModal) hideContact();
+      });
+    }
   });
 
   const desktopBtn = document.getElementById("showDesktopBtn");
@@ -102,5 +156,39 @@
         loader.classList.toggle("show", !!isLoading);
       });
     }
+  }
+
+  // Auto-update notice. Main streams status as updates are checked/downloaded.
+  // We only surface the "ready" state to the screen — a maintainer applies it
+  // with Ctrl+Alt+Shift+U. Other states are kept quiet so the kiosk face stays
+  // clean for the public.
+  if (window.kiosk && window.kiosk.onUpdateStatus) {
+    const toast = document.getElementById("updateToast");
+    const toastText = document.getElementById("updateToastText");
+    if (toast && toastText) {
+      window.kiosk.onUpdateStatus(function (status) {
+        if (status && status.state === "ready") {
+          toastText.textContent =
+            "Update " +
+            (status.version ? "v" + status.version + " " : "") +
+            "ready — press Ctrl+Alt+Shift+U to install";
+          toast.classList.add("show");
+        } else if (status && status.state === "error") {
+          toast.classList.remove("show");
+        }
+      });
+    }
+  }
+
+  // Populate the version footer from main's app-info handler (which reads
+  // app.getVersion() — sourced from package.json at build time). Fails silently
+  // if the target element isn't present so this stays safe on other pages.
+  if (window.kiosk && window.kiosk.appInfo) {
+    window.kiosk.appInfo().then(function (info) {
+      const el = document.querySelector(".version-number a");
+      if (el && info && info.version) {
+        el.textContent = "Version " + info.version;
+      }
+    });
   }
 })();

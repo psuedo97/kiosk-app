@@ -23,4 +23,20 @@ contextBridge.exposeInMainWorld("kiosk", {
     ipcRenderer.on("bhasini-loading", listener);
     return () => ipcRenderer.removeListener("bhasini-loading", listener);
   },
+
+  // --- Auto-update ----------------------------------------------------------
+  // Subscribe to update status from main. cb(status) where status is e.g.
+  // { state: "ready", version: "1.2.0" } | { state: "downloading", percent }.
+  // Returns an unsubscribe function.
+  onUpdateStatus: (cb) => {
+    const listener = (_e, status) => cb(status);
+    ipcRenderer.on("update-status", listener);
+    return () => ipcRenderer.removeListener("update-status", listener);
+  },
+  // Maintenance: apply a downloaded update now (same as Ctrl+Alt+Shift+U).
+  installUpdate: () => ipcRenderer.invoke("install-update"),
+  // Maintenance: force an immediate feed check.
+  checkForUpdates: () => ipcRenderer.invoke("check-for-updates"),
+  //To get the app information
+  appInfo: () => ipcRenderer.invoke("app-info"),
 });

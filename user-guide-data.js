@@ -4,6 +4,10 @@ window.USER_GUIDE = {
     "title": "Training Guide",
     "rel": "assets/user-guide.pdf"
   },
+  "sop": {
+    "title": "SOP",
+    "rel": "assets/Final SOP_NITI TARA Execution.pdf"
+  },
   "videos": {
     "english": [
       {

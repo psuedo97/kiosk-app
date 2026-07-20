@@ -35,6 +35,10 @@ const data = {
     title: "Training Guide",
     rel: "assets/user-guide.pdf",
   },
+  sop:{
+    title: "SOP",
+    rel: "assets/Final SOP_NITI TARA Execution.pdf",
+  },
   // Self-learning videos, by language.
   videos: {
     english: listVideos(path.join(ASSETS, "English Version")),
