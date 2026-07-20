@@ -179,4 +179,16 @@
       });
     }
   }
+
+  // Populate the version footer from main's app-info handler (which reads
+  // app.getVersion() — sourced from package.json at build time). Fails silently
+  // if the target element isn't present so this stays safe on other pages.
+  if (window.kiosk && window.kiosk.appInfo) {
+    window.kiosk.appInfo().then(function (info) {
+      const el = document.querySelector(".version-number a");
+      if (el && info && info.version) {
+        el.textContent = "Version " + info.version;
+      }
+    });
+  }
 })();

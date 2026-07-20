@@ -6,16 +6,22 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../assets/Roboto/Roboto-VariableFont_wdth%2Cwght.ttf") format("truetype-variations"),
-       url("../assets/Roboto/Roboto-VariableFont_wdth%2Cwght.ttf") format("truetype");
+  src:
+    url("../assets/Roboto/Roboto-VariableFont_wdth%2Cwght.ttf")
+      format("truetype-variations"),
+    url("../assets/Roboto/Roboto-VariableFont_wdth%2Cwght.ttf")
+      format("truetype");
 }
 @font-face {
   font-family: "Roboto";
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../assets/Roboto/Roboto-Italic-VariableFont_wdth%2Cwght.ttf") format("truetype-variations"),
-       url("../assets/Roboto/Roboto-Italic-VariableFont_wdth%2Cwght.ttf") format("truetype");
+  src:
+    url("../assets/Roboto/Roboto-Italic-VariableFont_wdth%2Cwght.ttf")
+      format("truetype-variations"),
+    url("../assets/Roboto/Roboto-Italic-VariableFont_wdth%2Cwght.ttf")
+      format("truetype");
 }
 
 body {
@@ -47,12 +53,12 @@ body {
   align-content: center;
 }
 .logo {
-      width: 285px;
-    height: 194px;
-    overflow: hidden;
-    left: 37%;
-    position: absolute;
-    top: -2%;
+  width: 285px;
+  height: 194px;
+  overflow: hidden;
+  left: 37%;
+  position: absolute;
+  top: -2%;
 }
 
 .logo img {
@@ -131,6 +137,14 @@ body {
 }
 .poweroff {
   margin-bottom: -214px;
+}
+.version-number {
+  margin-bottom: -217px;
+  color: #fff;
+  font-weight: 400;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-family: "Roboto", sans-serif;
 }
 .poweroff > a > img {
   height: 15px;
@@ -267,7 +281,7 @@ body {
    public face stays clean while a maintainer sees an update is waiting. */
 .kiosk-update-toast {
   position: fixed;
-  bottom: 16px;
+  bottom: 46px;
   right: 16px;
   display: none;
   padding: 10px 16px;

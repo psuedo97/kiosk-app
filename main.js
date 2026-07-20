@@ -357,6 +357,14 @@ ipcMain.handle("open-doc", (_e, rel) => {
 
 ipcMain.handle("quit-kiosk", doQuit);
 
+// Basic app info for the home screen (version footer, etc.). `app.getVersion()`
+// reads the "version" field from the bundled package.json — no fs access, no
+// build-step swap needed. Extend if the renderer needs more fields later.
+ipcMain.handle("app-info", () => ({
+  version: app.getVersion(),
+  name: app.getName(),
+}));
+
 // Shutdown the Windows system (invoked from the power-off confirmation modal).
 // /s = shutdown, /t 0 = immediately, /f = force-close apps (so the kiosk's
 // close-prevention doesn't stall the shutdown).

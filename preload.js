@@ -37,4 +37,6 @@ contextBridge.exposeInMainWorld("kiosk", {
   installUpdate: () => ipcRenderer.invoke("install-update"),
   // Maintenance: force an immediate feed check.
   checkForUpdates: () => ipcRenderer.invoke("check-for-updates"),
+  //To get the app information
+  appInfo: () => ipcRenderer.invoke("app-info"),
 });

@@ -41,7 +41,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://niti-tara-updates.s3.ap-south-1.amazonaws.com/updates/",
+        "url": "https://niti-tara-updates-prod.s3.ap-south-1.amazonaws.com/updates/",
         "channel": "latest"
       }
     ],
