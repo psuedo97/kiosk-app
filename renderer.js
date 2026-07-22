@@ -187,7 +187,7 @@
     window.kiosk.appInfo().then(function (info) {
       const el = document.querySelector(".version-number a");
       if (el && info && info.version) {
-        el.textContent = "Version " + info.version;
+        el.textContent = info.version;
       }
     });
   }

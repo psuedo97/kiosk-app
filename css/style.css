@@ -139,11 +139,9 @@ body {
   margin-bottom: -214px;
 }
 .version-number {
-  margin-bottom: -217px;
-  color: #fff;
-  font-weight: 400;
-  font-size: 13px;
-  text-transform: uppercase;
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 15px;
   font-family: "Roboto", sans-serif;
 }
 .poweroff > a > img {
